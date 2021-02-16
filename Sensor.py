@@ -28,7 +28,7 @@ class SensorComputation():
         # slope: smaller than (equals) 1 but positive
         # x_1, y_1 = position of player
         # x_2, y_2 = position of wall
-        for x in range(x_1,x_2):
+        for x in range(round(x_1),round(x_2)):
             y = y_1 + (y_2-y_1)/(x_2 - x_1) * (x - x_1)
             y = round(y)
             if self.map[x][y] is not None:
@@ -39,7 +39,7 @@ class SensorComputation():
         # slope: larger than 1 but positive
         # x_1, y_1 = position of player
         # x_2, y_2 = position of wall
-        for y in range(y_1,y_2):
+        for y in range(round(y_1),round(y_2)):
             x = x_1 + (x_2 - x_1)/(y_2-y_1) * (y - y_1)
             x = round(x)
             if self.map[x][y] is not None:
@@ -50,7 +50,7 @@ class SensorComputation():
         # slope: larger than 1 but negative (so something like -2)
         # x_1, y_1 = position of player
         # x_2, y_2 = position of wall
-        for y in range(y_1,y_2, -1):
+        for y in range(round(y_1),round(y_2), -1):
             x = x_1 + (x_2 - x_1)/(y_2-y_1) * (y - y_1)
             x = round(x)
             if self.map[x][y] is not None:
@@ -61,7 +61,7 @@ class SensorComputation():
         # slope: smaller than 1 but negative (so something -1 and 0)
         # x_1, y_1 = position of player
         # x_2, y_2 = position of wall
-        for x in range(x_1, x_2, -1):
+        for x in range(round(x_1), round(x_2), -1):
             y = y_1 + (y_2 - y_1) / (x_2 - x_1) * (x - x_1)
             y = round(y)
             if self.map[x][y] is not None:
@@ -90,8 +90,8 @@ class SensorComputation():
 
         slope = math.tan(math.radians(sensor.currentAngle))
         if 0 < sensor.currentAngle < 90:
-            intersection_x = int((y_max - y_pos)/slope + x_pos)
-            intersection_y = int((x_max - x_pos) * slope + y_pos)
+            intersection_x = ((y_max - y_pos)/slope + x_pos)
+            intersection_y = ((x_max - x_pos) * slope + y_pos)
             if slope > 1:
                 find_first_contact = self.find_first_contact_stronger1_right
             else:
@@ -103,8 +103,8 @@ class SensorComputation():
                 x_edge = x_max
                 y_edge = intersection_y
         elif 90 < sensor.currentAngle < 180:
-            intersection_x = int((y_max - y_pos) / slope + x_pos)
-            intersection_y = int((0 - x_pos) * slope + y_pos)
+            intersection_x = ((y_max - y_pos) / slope + x_pos)
+            intersection_y = ((0 - x_pos) * slope + y_pos)
             if slope < -1:
                 find_first_contact = self.find_first_contact_stronger1_left
             else:
@@ -116,8 +116,8 @@ class SensorComputation():
                 x_edge = 0
                 y_edge = intersection_y
         elif 180 < sensor.currentAngle < 270:
-            intersection_x = int((0 - y_pos) / slope + x_pos)
-            intersection_y = int((0 - x_pos) * slope + y_pos)
+            intersection_x = ((0 - y_pos) / slope + x_pos)
+            intersection_y = ((0 - x_pos) * slope + y_pos)
             if slope < 1:
                 find_first_contact = self.find_first_contact_stronger1_left
             else:
@@ -129,8 +129,8 @@ class SensorComputation():
                 x_edge = 0
                 y_edge = intersection_y
         elif 270 < sensor.currentAngle < 360:
-            intersection_x = int((0 - y_pos) / slope + x_pos)
-            intersection_y = int((x_max - x_pos) * slope + y_pos)
+            intersection_x = ((0 - y_pos) / slope + x_pos)
+            intersection_y = ((x_max - x_pos) * slope + y_pos)
             if slope < -1:
                 find_first_contact = self.find_first_contact_stronger1_right
             else:
