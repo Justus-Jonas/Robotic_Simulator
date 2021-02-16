@@ -96,6 +96,12 @@ class SensorComputation():
                 find_first_contact = self.find_first_contact_stronger1_right
             else:
                 find_first_contact = self.find_first_contact_weaker1_right
+            if (0 <= intersection_x <= x_max):
+                x_edge = intersection_x
+                y_edge = y_max
+            elif (0 <= intersection_y <= y_max):
+                x_edge = x_max
+                y_edge = intersection_y
         elif 90 < sensor.currentAngle < 180:
             intersection_x = int((y_max - y_pos) / slope + x_pos)
             intersection_y = int((0 - x_pos) * slope + y_pos)
@@ -103,6 +109,12 @@ class SensorComputation():
                 find_first_contact = self.find_first_contact_stronger1_left
             else:
                 find_first_contact = self.find_first_contact_weaker1_left
+            if (0 <= intersection_x <= x_max):
+                x_edge = intersection_x
+                y_edge = y_max
+            elif (0 <= intersection_y <= y_max):
+                x_edge = 0
+                y_edge = intersection_y
         elif 180 < sensor.currentAngle < 270:
             intersection_x = int((0 - y_pos) / slope + x_pos)
             intersection_y = int((0 - x_pos) * slope + y_pos)
@@ -110,6 +122,12 @@ class SensorComputation():
                 find_first_contact = self.find_first_contact_stronger1_left
             else:
                 find_first_contact = self.find_first_contact_weaker1_left
+            if (0 <= intersection_x <= x_max):
+                x_edge = intersection_x
+                y_edge = 0
+            elif (0 <= intersection_y <= y_max):
+                x_edge = 0
+                y_edge = intersection_y
         elif 270 < sensor.currentAngle < 360:
             intersection_x = int((0 - y_pos) / slope + x_pos)
             intersection_y = int((x_max - x_pos) * slope + y_pos)
@@ -117,6 +135,12 @@ class SensorComputation():
                 find_first_contact = self.find_first_contact_stronger1_right
             else:
                 find_first_contact = self.find_first_contact_weaker1_right
+            if (0 <= intersection_x <= x_max):
+                x_edge = intersection_x
+                y_edge = 0
+            elif (0 <= intersection_y <= y_max):
+                x_edge = x_max
+                y_edge = intersection_y
         elif sensor.currentAngle == 0:
             for x_i in range(x_pos, x_max):
                 if self.map[x_i][y_pos] is not None:
@@ -138,12 +162,6 @@ class SensorComputation():
                     return y_pos - y_i
             return y_pos
 
-        if (0 <= intersection_x <= x_max):
-            x_edge = intersection_x
-            y_edge = y_max
-        elif (0 <= intersection_y <= y_max):
-            x_edge = x_max
-            y_edge = intersection_y
         else:
             print('no intersection error')
             print(sensor.currentAngle)
