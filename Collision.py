@@ -56,28 +56,24 @@ def check_for_collision(boundary_points, C, radius):
     collision_verdict_list = []
     distance_to_walls = calculate_dist_from_walls(boundary_points, C, radius)
 
-    print(distance_to_walls)
-
     # Object passes through the wall/s - Move is not allowed
     for ind in range(len(distance_to_walls)):
         if(distance_to_walls[ind] < 0):
             return collision_verdict_list
     
     # Just touches the walls or Away from the walls - Move is allowed
-    for ind in range(len(distance_to_walls)):
-        if(distance_to_walls[ind] >= 0):
-            collision_verdict_list.append(ind)
-
+    for wall in Walls:
+        if(distance_to_walls[wall] >= 0):
+            collision_verdict_list.append(wall)
+    return collision_verdict_list
 
 if __name__ == "__main__":
     P1 = [0, 0]
     P2 = [6, 0]
     P3 = [6,6]
     P4 = [0,6]
-    C = [3, 2]
+    C = [0.5, 1]
 
     boundary_points = [P1, P2, P3, P4]
     print('\n')
     print(check_for_collision(boundary_points, C, 1))
-
-    # print(min_distance_point_to_line(A, B, C))
