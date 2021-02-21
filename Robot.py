@@ -20,7 +20,7 @@ class Robot(Artifact):
     def robotBootup(self):
         self.len = 250
         self.point = np.array([0,0])
-        self.setPos(500, 500)
+        self.setPos(500, 400)
         self.normal = np.array([0,0])
         #robot's personal properties
         self.ICC = self.pos
@@ -34,6 +34,7 @@ class Robot(Artifact):
         self.rotation = 0
         self.R = 0
         x_axis = np.array([1,0])
+        # Angle between current movement and defined forward
         self.theta = np.arccos(np.dot(self.forward, x_axis) /
                     np.linalg.norm(self.forward) * np.linalg.norm(x_axis))
 
@@ -59,6 +60,7 @@ class Robot(Artifact):
     def setPos(self, x, y):
         self.pos = np.array([x,y])
     
+    # Find intersection point of two line segments
     def getLinesIntersectionPt(self, a1, a2, b1, b2):
         intersection_pt = np.array([0,0])
         ptB = a2-a1
@@ -106,6 +108,7 @@ class Robot(Artifact):
 
         if len(intersection_pts_list)==0:
             return False, np.zeros((2,))
+            
         else:
             intersection_pts = np.copy(intersection_pts_list)
             # find sensor distance from the robot's local coordinate's - starting point.
@@ -119,6 +122,7 @@ class Robot(Artifact):
             normVec = VecUtils.normalizationByDivision(sensor-self.pos)
             subSensorThreshold = sensor + normVec*self.sensorThreshold
 
+            # intersection points for each sensor with relevant wall
             interactDecision, intersectionPoint = self.getLineRectIntersectionPt(sensor, subSensorThreshold, 
                                                             other.pos[0], other.pos[1], other.rsize[0], other.rsize[1])
 
@@ -223,38 +227,33 @@ class Robot(Artifact):
 
     def drawArtifact(self,qp):
         #body
-        origin = np.array([self.pos[0] - self.rsize[0]/2,self.pos[1] - self.rsize[0]/2])
-        pen = QPen(Qt.red, 1.5, Qt.SolidLine)
+        robotCenter = np.array([self.pos[0] - self.rsize[0]/2,self.pos[1] - self.rsize[0]/2])
+        pen = QPen(Qt.darkCyan, 1.5, Qt.SolidLine)
         qp.setPen(pen)
-        qp.drawEllipse(origin[0], origin[1], self.rsize[0], self.rsize[0])
+        qp.drawEllipse(robotCenter[0], robotCenter[1], self.rsize[0], self.rsize[0])
 
-        pen2 = QPen(Qt.red, 0.5, Qt.SolidLine)
+        pen2 = QPen(Qt.darkCyan, 0.5, Qt.SolidLine)
         qp.setPen(pen2)
         f = self.forward 
         qp.drawLine(self.pos[0], self.pos[1], self.pos[0]+f[0]*self.size/2, self.pos[1]+f[1]*self.size/2)
 
-        #ICC debug
-        pen3 = QPen(Qt.magenta, 1.5, Qt.SolidLine)
-        qp.setPen(pen3)
+        # ICC debug
+        penICC = QPen(Qt.red, 1.0, Qt.DashDotDotLine)
+        qp.setPen(penICC)
         qp.drawEllipse(self.ICC[0], self.ICC[1], self.size/4, self.size/4)
 
-        pen6 = QPen(Qt.green, 5, Qt.SolidLine)
-        qp.setPen(pen6)
+        # Intersection Point
+        penCollision = QPen(Qt.black, 5, Qt.SolidLine)
+        qp.setPen(penCollision)
         qp.drawPoint(self.point[0],self.point[1])
 
-
-        pen = QPen(Qt.black, 10, Qt.SolidLine)
-        qp.setPen(pen)
-
-        #draw texts
-
+        # Draw texts
         pVec = np.array([self.forward[1],-self.forward[0]])
         lefTextPos = self.pos + pVec * 50
 
         pen = QPen(Qt.blue, 1, Qt.SolidLine)
         qp.setPen(pen)
 
-        #qp.drawPoint(textPos[0], textPos[1])
         qp.drawText(QPointF(lefTextPos[0] ,lefTextPos[1] ),str(self.vleft))
 
         rightTextPos = self.pos + pVec * -50
@@ -262,7 +261,6 @@ class Robot(Artifact):
         qp.setPen(pen)
 
         qp.drawText(QPointF(rightTextPos[0], rightTextPos[1]), str(self.vright))
-
 
         for i,sensor in enumerate(self.sensors) :
             pen6 = QPen(Qt.darkCyan, 0.01, Qt.SolidLine)
