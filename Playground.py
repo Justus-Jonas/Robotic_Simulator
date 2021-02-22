@@ -56,6 +56,16 @@ class Playground(QMainWindow):
             temp = self.robot.checkForCollision(wall)
             if self.collisionFlag == False:
                 self.collisionFlag = temp
+#            if temp:
+#                # adjust theta
+#                self.robot.theta =  # wall theta
+#
+#                # adjust velocity
+#                vx = self.robot.getVelocity() * np.cos(self.robot.theta)
+#                vy = self.robot.getVelocity() * np.sin(self.robot.theta)
+#                v = np.sqrt(vx**2 + vy**2)
+#                self.robot.vright = v
+#                self.robot.vleft = v
         
         if self.collisionFlag:
             self.robot.pos = self.prevPos

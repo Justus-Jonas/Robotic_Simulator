@@ -136,6 +136,7 @@ class Robot(Artifact):
             self.vleft = self.vright = 0
             return True
         else:
+            print('entrou')
             if normX != 0:
                 if normX > 0:
                     vec = np.array([0, -1])
