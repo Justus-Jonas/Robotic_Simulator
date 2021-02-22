@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import VecUtils
 from Artifact import Artifact
+import math
 
 class Robot(Artifact):
 
@@ -47,7 +48,6 @@ class Robot(Artifact):
         super(Robot, self).__init__(assignId=assignId)
         self.robotBootup()
 
-    # init or reset sensors
     def sensorsBootup(self):
         x_axis = self.forward
         self.sensors = []
@@ -55,7 +55,7 @@ class Robot(Artifact):
         for sensor in range(12):
             sensor_angle = np.pi*(offset_angle * sensor)/180
             temp = np.array([np.cos(sensor_angle) * x_axis[0] - np.sin(sensor_angle)* x_axis[1],
-                np.sin(sensor_angle) * x_axis[0] + np.cos(sensor_angle) * x_axis[1] ])
+                np.sin(sensor_angle) * x_axis[0] + np.cos(sensor_angle) * x_axis[1], ])
             self.sensors.append(self.pos + temp*self.rsize[0]/2)
     
     # set robot's position
@@ -82,6 +82,9 @@ class Robot(Artifact):
         if u>1 or u<0:
             return None
 
+        # print(a1)
+        # print(t)
+    
         intersection_pt = a1 + t*ptB
         return [intersection_pt[0], intersection_pt[1]]
     
@@ -117,6 +120,7 @@ class Robot(Artifact):
             dist = np.linalg.norm(intersection_pts - pt_s)
             # find the shortest distance
             minIndex = np.argmin(dist)
+            # print(dist)
             return True, intersection_pts[minIndex]
     
     def checkForCollision(self, other):
@@ -128,9 +132,20 @@ class Robot(Artifact):
             interactDecision, intersectionPoint = self.getLineRectIntersectionPt(sensor, subSensorThreshold, 
                                                             other.pos[0], other.pos[1], other.rsize[0], other.rsize[1])
 
-            if interactDecision:
-                self.sensorDistances[ind] = np.linalg.norm(intersectionPoint - sensor) 
-                
+            # print(sensor[1])
+            # print(other.pos[1])            
+            d = np.sqrt((sensor[0]-other.pos[0])**2 + (sensor[1] -other.pos[1])**2)
+            # if not math.isnan(d):
+            self.sensorDistances[ind] = d
+            print(d)
+
+            # print(sensor[0])
+            # print(other.pos[0])
+            # if interactDecision:
+
+            # self.sensorDistances[ind] = np.linalg.norm(sensor[1])
+            
+            
         return super(Robot, self).checkForCollision(other)
     
     def collisionHandling(self, obj, normX, normY, intersectionPoint):
@@ -258,10 +273,6 @@ class Robot(Artifact):
             qp.setPen(pen6)
             norVec = VecUtils.normalizationByDivision(sensor - self.pos) *self.sensorThreshold
             qp.drawText(QPointF(sensor[0] +norVec[0], sensor[1]+norVec[1]), str("{:.1f}".format(self.sensorDistances[i])))
-            # interesting if obstacles can be in the middle of the playing area, sensor line would stop at obstacle
-            # d = sqrt((sensor[0]- (sensor[0] +norVec[0])) ** 2 + (sensor[1]- (sensor[1] +norVec[0])) ** 2)
-            # x, y = ((1 - (self.sensorDistances[i]/d)) * sensor[0] + (self.sensorDistances[i]/d) * (sensor[0] +norVec[0])), ((1 - (self.sensorDistances[i]/d)) * sensor[1] + (self.sensorDistances[i]/d) * (sensor[1] +norVec[1]))
-            # qp.drawLine(QPointF(sensor[0], sensor[1]), (QPointF(x, y)))
             qp.setPen(QPen(Qt.red,  1, Qt.DashLine))
             qp.drawLine(QPointF(sensor[0], sensor[1]), (QPointF(sensor[0] + norVec[0], sensor[1]+norVec[1])))
         return True
