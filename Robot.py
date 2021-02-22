@@ -181,35 +181,36 @@ class Robot(Artifact):
 
             self.rotation = deltaV / self.len
             self.R = self.len/2 * (self.vright + self.vleft)/deltaV
-            self.ICC = np.array([self.pos[0]- self.R * np.sin(self.theta),
-                                 self.pos[1]+ self.R * np.cos(self.theta)])
+            self.ICC = np.array([self.pos[0] - self.R * np.sin(self.theta),
+                                 self.pos[1] - self.R * np.cos(self.theta)])
+                                 #self.pos[1] + self.R * np.cos(self.theta)])
 
             odt = self.rotation * deltaTime
-            rotationalMatrix = np.array([[np.cos(odt),-np.sin(odt),0],
-                                  [np.sin(odt),np.cos(odt),0],
-                                  [0,0,1]])
-            originMatrix = np.array([self.pos[0]-self.ICC[0],
-                                       self.pos[1]-self.ICC[1],
-                                       self.theta])
+            rotationalMatrix = np.array([[np.cos(odt), np.sin(odt), 0],
+                                         [-np.sin(odt), np.cos(odt),  0],
+                                         [0,            0,           1]])
+            originMatrix = np.array([self.pos[0] - self.ICC[0],
+                                     self.pos[1] - self.ICC[1],
+                                     self.theta])
             prevLocationMatrix = np.array([self.ICC[0],
                                            self.ICC[1],
                                            odt])
             matrix = np.dot(rotationalMatrix,originMatrix) + prevLocationMatrix
+            #matrix = np.dot(np.array([[1, 0, 0], [0, -1, 0], [0, 0, 1]]), matrix)
 
             self.pos = np.array([matrix[0],matrix[1]])
             self.theta = matrix[2]
 
             self.forward = np.array(
-                [np.cos(self.theta)*x_axis[0] - np.sin(self.theta)*x_axis[1],
-                    np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
+                [np.cos(self.theta)*x_axis[0] + np.sin(self.theta)*x_axis[1],
+                    -np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
                 ])
 
-        elif self.vright == -self.vleft and self.vright !=0:
-            self.rotation = 2 /self.len * self.vright
-        elif self.vright !=0 :
+        #elif self.vright !=0 :
+        else:
             self.forward = np.array(
-                [np.cos(self.theta) * x_axis[0] - np.sin(self.theta) * x_axis[1],
-                 np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
+                [np.cos(self.theta) * x_axis[0] + np.sin(self.theta) * x_axis[1],
+                 -np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
                  ])
             f = np.copy(self.forward)
             f/= np.linalg.norm(self.forward)
