@@ -1,3 +1,5 @@
+from math import sqrt
+
 import numpy as np
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -185,16 +187,17 @@ class Robot(Artifact):
 
             self.rotation = deltaV / self.len
             self.R = self.len/2 * (self.vright + self.vleft)/deltaV
-            self.ICC = np.array([self.pos[0]- self.R * np.sin(self.theta),
-                                 self.pos[1]+ self.R * np.cos(self.theta)])
+            self.ICC = np.array([self.pos[0] - self.R * np.sin(self.theta),
+                                 self.pos[1] - self.R * np.cos(self.theta)])
+                                 #self.pos[1] + self.R * np.cos(self.theta)])
 
-            odt = self.rotation * deltaTime
-            rotationalMatrix = np.array([[np.cos(odt),-np.sin(odt),0],
-                                  [np.sin(odt),np.cos(odt),0],
-                                  [0,0,1]])
-            originMatrix = np.array([self.pos[0]-self.ICC[0],
-                                       self.pos[1]-self.ICC[1],
-                                       self.theta])
+            odt = self.rotation # * deltaTime
+            rotationalMatrix = np.array([[np.cos(odt), np.sin(odt), 0],
+                                         [-np.sin(odt), np.cos(odt),  0],
+                                         [0,            0,           1]])
+            originMatrix = np.array([self.pos[0] - self.ICC[0],
+                                     self.pos[1] - self.ICC[1],
+                                     self.theta])
             prevLocationMatrix = np.array([self.ICC[0],
                                            self.ICC[1],
                                            odt])
@@ -204,16 +207,14 @@ class Robot(Artifact):
             self.theta = matrix[2]
 
             self.forward = np.array(
-                [np.cos(self.theta)*x_axis[0] - np.sin(self.theta)*x_axis[1],
-                    np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
+                [np.cos(self.theta)*x_axis[0] + np.sin(self.theta)*x_axis[1],
+                    -np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
                 ])
 
-        elif self.vright == -self.vleft and self.vright !=0:
-            self.rotation = 2 /self.len * self.vright
-        elif self.vright !=0 :
+        else:
             self.forward = np.array(
-                [np.cos(self.theta) * x_axis[0] - np.sin(self.theta) * x_axis[1],
-                 np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
+                [np.cos(self.theta) * x_axis[0] + np.sin(self.theta) * x_axis[1],
+                 -np.sin(self.theta) * x_axis[0] + np.cos(self.theta) * x_axis[1],
                  ])
             f = np.copy(self.forward)
             f/= np.linalg.norm(self.forward)
@@ -267,5 +268,10 @@ class Robot(Artifact):
             qp.setPen(pen6)
             norVec = VecUtils.normalizationByDivision(sensor - self.pos) *self.sensorThreshold
             qp.drawText(QPointF(sensor[0] +norVec[0], sensor[1]+norVec[1]), str("{:.1f}".format(self.sensorDistances[i])))
-
+            # interesting if obstacles can be in the middle of the playing area, sensor line would stop at obstacle
+            # d = sqrt((sensor[0]- (sensor[0] +norVec[0])) ** 2 + (sensor[1]- (sensor[1] +norVec[0])) ** 2)
+            # x, y = ((1 - (self.sensorDistances[i]/d)) * sensor[0] + (self.sensorDistances[i]/d) * (sensor[0] +norVec[0])), ((1 - (self.sensorDistances[i]/d)) * sensor[1] + (self.sensorDistances[i]/d) * (sensor[1] +norVec[1]))
+            # qp.drawLine(QPointF(sensor[0], sensor[1]), (QPointF(x, y)))
+            qp.setPen(QPen(Qt.red,  1, Qt.DashLine))
+            qp.drawLine(QPointF(sensor[0], sensor[1]), (QPointF(sensor[0] + norVec[0], sensor[1]+norVec[1])))
         return True
