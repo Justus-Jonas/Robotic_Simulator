@@ -43,6 +43,7 @@ class Robot(Artifact):
 
         self.sensorsBootup()
         self.sensorDistances = np.zeros((len(self.sensors),))
+        self.sensorDistancesSupport = np.zeros((len(self.sensors),))
 
     def __init__(self, assignId=True):
         super(Robot, self).__init__(assignId=assignId)
@@ -54,8 +55,8 @@ class Robot(Artifact):
         offset_angle = 30
         for sensor in range(12):
             sensor_angle = np.pi*(offset_angle * sensor)/180
-            temp = np.array([np.cos(sensor_angle) * x_axis[0] - np.sin(sensor_angle)* x_axis[1],
-                np.sin(sensor_angle) * x_axis[0] + np.cos(sensor_angle) * x_axis[1], ])
+            temp = np.array([np.cos(sensor_angle) * x_axis[0] +  np.sin(sensor_angle)* x_axis[1],
+                -np.sin(sensor_angle) * x_axis[0] + np.cos(sensor_angle) * x_axis[1], ])
             self.sensors.append(self.pos + temp*self.rsize[0]/2)
     
     # set robot's position
@@ -134,10 +135,11 @@ class Robot(Artifact):
 
             # print(sensor[1])
             # print(other.pos[1])            
-            d = np.sqrt((sensor[0]-other.pos[0])**2 + (sensor[1] -other.pos[1])**2)
+            #d = np.sqrt((sensor[0]-other.pos[0])**2 + (sensor[1] -other.pos[1])**2)
+            d = np.sqrt((sensor[0]-intersectionPoint[0])**2 + (sensor[1] -intersectionPoint[1])**2)
             # if not math.isnan(d):
             self.sensorDistances[ind] = d
-            print(d)
+           # print(d)
 
             # print(sensor[0])
             # print(other.pos[0])

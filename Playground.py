@@ -52,21 +52,16 @@ class Playground(QMainWindow):
         self.robot.updateRobot(deltaTime)
         self.collisionFlag = False
         self.robot.sensorDistances = np.zeros((len(self.robot.sensors),))
+        sensor2walls_distances = [] 
         for wall in self.walls:
             temp = self.robot.checkForCollision(wall)
             if self.collisionFlag == False:
                 self.collisionFlag = temp
-#            if temp:
-#                # adjust theta
-#                self.robot.theta =  # wall theta
-#
-#                # adjust velocity
-#                vx = self.robot.getVelocity() * np.cos(self.robot.theta)
-#                vy = self.robot.getVelocity() * np.sin(self.robot.theta)
-#                v = np.sqrt(vx**2 + vy**2)
-#                self.robot.vright = v
-#                self.robot.vleft = v
-        
+            sensor2walls_distances.append(self.robot.sensorDistances.copy())
+        sensor_walls = zip(*sensor2walls_distances)
+        sensor_distances = [min(wd) if min(wd)<=self.robot.sensorThreshold else 0 for wd in sensor_walls]
+        self.robot.sensorDistances = sensor_distances.copy()
+
         if self.collisionFlag:
             self.robot.pos = self.prevPos
         
