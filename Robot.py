@@ -20,14 +20,14 @@ class Robot(Artifact):
         return self.forward * (self.vleft + self.vright)/2
     
     def robotBootup(self):
-        self.len = 250
+        self.len = 150
         self.point = np.array([0,0])
         self.setPos(500, 400)
         self.normal = np.array([0,0])
         #robot's personal properties
         self.ICC = self.pos
         self.forward = np.array([1., 0.])
-        self.sensorThreshold = 200
+        self.sensorThreshold = 100
         self.size = 100.0
         self.vleft = 0.0
         self.vright = 0.0
@@ -132,46 +132,36 @@ class Robot(Artifact):
                 self.sensorDistances[ind] = np.linalg.norm(intersectionPoint - sensor) 
                 
         return super(Robot, self).checkForCollision(other)
-
     
     def collisionHandling(self, obj, normX, normY, intersectionPoint):
         projection = np.array([0, 0])
 
-        if normX != 0 and normY != 0:
-            vec = np.array([0,0])
-            self.vleft = self.vright = 0
-            return True
-        else:
-            if normX != 0:
-                if normX > 0:
-                    vec = np.array([0, -1])
-                else:
-                    vec = np.array([0, 1])
+        if normY == 0 or normX == 0:
+            if normX == 1:
+                self.pos[0] = (intersectionPoint[0] + self.rsize[0]/2 + 0.1)
+            elif normX == -1:
+                self.pos[0] = (intersectionPoint[0]-self.rsize[0]/2 - 0.1)                
+            if normY == 1:
+                self.pos[1] = (intersectionPoint[1] + self.rsize[0]/2+ 0.1)
+            elif normY == -1:
+                self.pos[1] = (intersectionPoint[1] - self.rsize[0]/2 - 0.1)
+            
+            vecPlane = np.array([normY, -normX])
+            vecSliding = np.multiply(self.forward, vecPlane)/(vecPlane[0]**2 + vecPlane[1]**2) * vecPlane
+            if vecSliding[0] == 0 and vecSliding[1] == 0:
+                self.vleft = self.vright = 0
             else:
-                if normY > 0:
-                    vec = np.array([-1,0])
-                else:
-                    vec = np.array([1, 0])
-        vecPlane = vec
-        projection = np.multiply(self.forward, vecPlane) / (vecPlane[0]**2 + vecPlane[1] ** 2)* vecPlane
-        
-        if projection[0] != 0:
-            if projection[0] > 0:
-                vec = np.array([1, 0])
-            else:
-                vec = np.array([-1, 0])
-        else:
-            if projection[1] > 0:
-                vec = np.array([0,1])
-            else:
-                vec = np.array([0, -1])
-        n = VecUtils.normalizationByDivision(intersectionPoint - self.pos)
+                self.forward = vecSliding
+                self.theta =np.arccos(np.dot(self.forward, np.array([1, 0])) / (
+                    np.linalg.norm(self.forward) * np.linalg.norm(np.array([1, 0]))))
 
-        self.forward = VecUtils.normalizationByDivision(vec)
-        prevTheta = np.rad2deg(self.theta)
+        else:
+            ptX = self.pos[0] - self.point[0]
+            ptY = self.pos[1] - self.point[1]
 
-        if prevTheta < 0:
-            self.theta = -self.theta
+            pt = np.array([ptX, ptY])
+            pt = Utils.normalizationByDivision(pt)
+            self.pos = intersectionPoint + pt*(self.rsize[0]/2 + 0.1)
         
         return True
 
@@ -241,7 +231,7 @@ class Robot(Artifact):
         # ICC debug
         penICC = QPen(Qt.red, 1.0, Qt.DashDotDotLine)
         qp.setPen(penICC)
-        qp.drawEllipse(self.ICC[0], self.ICC[1], self.size/4, self.size/4)
+        qp.drawEllipse(self.ICC[0] - self.size/8, self.ICC[1] - self.size/8, self.size/4, self.size/4)
 
         # Intersection Point
         penCollision = QPen(Qt.black, 5, Qt.SolidLine)

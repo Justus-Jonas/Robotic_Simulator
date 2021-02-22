@@ -90,19 +90,19 @@ class Playground(QMainWindow):
 
         if key == Qt.Key_W:
             self.doPress = True
-            self.robot.vleft += 5
+            self.robot.vleft += 1
 
         elif key == Qt.Key_S:
             self.doPress = True
-            self.robot.vleft += -5
+            self.robot.vleft += -1
         
         elif key == Qt.Key_O:
             self.doPress = True
-            self.robot.vright += 5
+            self.robot.vright += 1
 
         elif key == Qt.Key_L:
             self.doPress = True
-            self.robot.vright += -5
+            self.robot.vright += -1
         
         elif key == Qt.Key_X:
             self.robot.vright = 0
