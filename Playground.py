@@ -5,9 +5,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from Artifact import Artifact
+from Sensor import Sensor, SensorComputation
 from Wall import Wall
 from Robot import Robot
 import numpy as np
+import math
 
 class Playground(QMainWindow):
     SCREEN_WIDTH = 1080
@@ -48,25 +50,25 @@ class Playground(QMainWindow):
         self.lastFrameTime = time.time()
         self.timer.start(17, self)
 
+    def fill_map(self, wall, maps):
+        for x in range(wall.pos[0], wall.pos[0] + wall.rsize[0]):
+            maps[x][wall.pos[1]] = True
+        for y in range(wall.pos[1], wall.pos[1] + wall.rsize[1]):
+            maps[wall.pos[0]][y] = True
+        return maps
+
     def playgroundUpdateFlow(self, deltaTime):
         self.robot.updateRobot(deltaTime)
         self.collisionFlag = False
         self.robot.sensorDistances = np.zeros((len(self.robot.sensors),))
+        maps = np.full((self.SCREEN_HEIGHT, self.SCREEN_WIDTH), None)
+        compute = SensorComputation(0, maps, self.robot.len)
         for wall in self.walls:
-            temp = self.robot.checkForCollision(wall)
-            if self.collisionFlag == False:
-                self.collisionFlag = temp
-#            if temp:
-#                # adjust theta
-#                self.robot.theta =  # wall theta
-#
-#                # adjust velocity
-#                vx = self.robot.getVelocity() * np.cos(self.robot.theta)
-#                vy = self.robot.getVelocity() * np.sin(self.robot.theta)
-#                v = np.sqrt(vx**2 + vy**2)
-#                self.robot.vright = v
-#                self.robot.vleft = v
-        
+            maps = self.fill_map(wall, maps)
+
+        list_of_distances = compute.update_distance(math.degrees(self.robot.theta), maps, self.robot.pos[0], self.robot.pos[1])
+        print(list_of_distances)
+
         if self.collisionFlag:
             self.robot.pos = self.prevPos
         
