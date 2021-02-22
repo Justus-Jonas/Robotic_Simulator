@@ -1,3 +1,5 @@
+from math import sqrt
+
 import numpy as np
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -268,5 +270,10 @@ class Robot(Artifact):
             qp.setPen(pen6)
             norVec = VecUtils.normalizationByDivision(sensor - self.pos) *self.sensorThreshold
             qp.drawText(QPointF(sensor[0] +norVec[0], sensor[1]+norVec[1]), str("{:.1f}".format(self.sensorDistances[i])))
-
+            # interesting if obstacles can be in the middle of the playing area, sensor line would stop at obstacle
+            # d = sqrt((sensor[0]- (sensor[0] +norVec[0])) ** 2 + (sensor[1]- (sensor[1] +norVec[0])) ** 2)
+            # x, y = ((1 - (self.sensorDistances[i]/d)) * sensor[0] + (self.sensorDistances[i]/d) * (sensor[0] +norVec[0])), ((1 - (self.sensorDistances[i]/d)) * sensor[1] + (self.sensorDistances[i]/d) * (sensor[1] +norVec[1]))
+            # qp.drawLine(QPointF(sensor[0], sensor[1]), (QPointF(x, y)))
+            qp.setPen(QPen(Qt.red,  1, Qt.DashLine))
+            qp.drawLine(QPointF(sensor[0], sensor[1]), (QPointF(sensor[0] + norVec[0], sensor[1]+norVec[1])))
         return True
