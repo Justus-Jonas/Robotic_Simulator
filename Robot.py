@@ -235,7 +235,7 @@ class Robot(Artifact):
         #ICC debug
         pen3 = QPen(Qt.magenta, 1.5, Qt.SolidLine)
         qp.setPen(pen3)
-        qp.drawEllipse(self.ICC[0], self.ICC[1], self.size/4, self.size/4)
+        qp.drawEllipse(self.ICC[0] - self.size/8, self.ICC[1] - self.size/8, self.size/4, self.size/4)
 
         pen6 = QPen(Qt.green, 5, Qt.SolidLine)
         qp.setPen(pen6)
