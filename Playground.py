@@ -59,7 +59,8 @@ class Playground(QMainWindow):
                 self.collisionFlag = temp
             sensor2walls_distances.append(self.robot.sensorDistances.copy())
         sensor_walls = zip(*sensor2walls_distances)
-        sensor_distances = [min(wd) if min(wd)<=self.robot.sensorThreshold else 0 for wd in sensor_walls]
+        #print(list(zip(*sensor2walls_distances)))
+        sensor_distances = [min(wd) if min(wd)<=self.robot.sensorThreshold else self.robot.sensorThreshold for wd in sensor_walls]
         self.robot.sensorDistances = sensor_distances.copy()
 
         if self.collisionFlag:
