@@ -8,15 +8,18 @@ from Artifact import Artifact
 from Wall import Wall
 from Robot import Robot
 import numpy as np
+from NeuralNetwork import NeuralNetwork
 
 class Playground(QMainWindow):
     SCREEN_WIDTH = 1080
     SCREEN_HEIGHT = 720
+    MAX_SPEED = 5
 
     def __init__(self):
         super(Playground, self).__init__()
         self.initGround()
         self.initUIComponents()
+        self.nn = NeuralNetwork()
 
     def getCenter(self):
         return (self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2)
@@ -27,10 +30,10 @@ class Playground(QMainWindow):
         centerX, centerY = self.getCenter()
         # rectangle box
         # self.walls.append(Wall(centerX,centerY,100,100))
-        self.walls.append(Wall(centerX-self.SCREEN_WIDTH/2, centerY, 20, self.SCREEN_HEIGHT))
-        self.walls.append(Wall(centerX+self.SCREEN_WIDTH/2, centerY, 20, self.SCREEN_HEIGHT))
-        self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, 20))
-        self.walls.append(Wall(centerX, centerY+self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, 20))
+        self.walls.append(Wall(centerX-self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
+        self.walls.append(Wall(centerX+self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
+        self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, -1))
+        self.walls.append(Wall(centerX, centerY+self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, -1))
 
         self.doPress = False
         self.collisionFlag = False
@@ -62,10 +65,50 @@ class Playground(QMainWindow):
         #print(list(zip(*sensor2walls_distances)))
         sensor_distances = [min(wd) if min(wd)<=self.robot.sensorThreshold else self.robot.sensorThreshold for wd in sensor_walls]
         self.robot.sensorDistances = sensor_distances.copy()
+        print(sensor_distances)
 
         if self.collisionFlag:
             self.robot.pos = self.prevPos
         
+        self.prevPos = self.robot.pos
+
+        return True
+
+    def playground_AI_update_flow(self, deltaTime):
+        self.robot.updateRobot(deltaTime)
+        self.collisionFlag = False
+        self.robot.sensorDistances = np.zeros((len(self.robot.sensors),))
+        sensor2walls_distances = []
+        for wall in self.walls:
+            temp = self.robot.checkForCollision(wall)
+            if self.collisionFlag == False:
+                self.collisionFlag = temp
+            sensor2walls_distances.append(self.robot.sensorDistances.copy())
+        sensor_walls = zip(*sensor2walls_distances)
+        # print(list(zip(*sensor2walls_distances)))
+        sensor_distances = [min(wd) if min(wd) <= self.robot.sensorThreshold else self.robot.sensorThreshold for wd
+                            in sensor_walls]
+
+        self.robot.sensorDistances = sensor_distances.copy()
+
+        # regulate speed
+        if self.robot.vleft > self.MAX_SPEED:
+            self.robot.vleft = self.MAX_SPEED
+
+        if self.robot.vleft < -self.MAX_SPEED:
+            self.robot.vleft = -self.MAX_SPEED
+
+        if self.robot.vright > self.MAX_SPEED:
+            self.robot.vright = self.MAX_SPEED
+
+        if self.robot.vright < -self.MAX_SPEED:
+            self.robot.vright = -self.MAX_SPEED
+
+        self.robot.vright, self.robot.vleft = self.nn.make_prediction(sensor_distances, self.robot.vright, self.robot.vleft, self.MAX_SPEED)
+
+        if self.collisionFlag:
+            self.robot.pos = self.prevPos
+
         self.prevPos = self.robot.pos
 
         return True
@@ -128,7 +171,8 @@ class Playground(QMainWindow):
             currentTime = time.time()
             dt = (currentTime - self.lastFrameTime)
             self.lastFrameTime = currentTime
-            self.playgroundUpdateFlow(dt)
+            #self.playgroundUpdateFlow(dt)
+            self.playground_AI_update_flow(dt)
             self.update()
         else:
             super(MRS, self).timerEvent(event)
