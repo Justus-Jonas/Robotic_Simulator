@@ -19,7 +19,7 @@ class Playground(QMainWindow):
         super(Playground, self).__init__()
         self.initGround()
         self.initUIComponents()
-        self.nn = NeuralNetwork()
+        self.nn = NeuralNetwork(8)
 
     def getCenter(self):
         return (self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2)

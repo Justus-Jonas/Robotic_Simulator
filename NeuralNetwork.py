@@ -4,26 +4,28 @@ import math
 sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
 
 class NeuralNetwork:
-    def __init__(self):
+    def __init__(self, hiddenSize):
         self.InputSize = 12 + 2  # 12 sensors + current vl + rl
-        # self.HiddenSize = hiddenSize
+        self.HiddenSize = hiddenSize
         self.OutputSize = 2
-        # self.BiasesH = np.zeros((self.HiddenSize, 1))   # biases hidden layer
+        self.BiasesH = np.zeros((self.HiddenSize, 1))   # biases hidden layer
         self.BiasesO = np.zeros((self.OutputSize, 1))   # biases output layer
-        # self.WeightsH = np.random.randn(self.HiddenSize, self.InputSize)  # weights hidden layer
-        self.WeightsO = np.random.randn(self.OutputSize, self.InputSize)  # weights output layer
+        self.WeightsH = np.random.randn(self.HiddenSize, self.InputSize)  # weights hidden layer
+        self.WeightsO = np.random.randn(self.OutputSize, self.HiddenSize)  # weights output layer
 
     def feed_forward(self, input):
-        # activation_hidden = sigmoid(self.WeightsH @ input + self.BiasesH)
-        activation_output = sigmoid(self.WeightsO @ input + self.BiasesO)
+        activation_hidden = sigmoid(self.WeightsH @ input + self.BiasesH)
+        activation_output = sigmoid(self.WeightsO @ activation_hidden + self.BiasesO)
         return activation_output
 
     def get_weights_biases(self):
-        return self.WeightsO, self.BiasesO
+        return self.WeightsH, self.BiasesH, self.WeightsO, self.BiasesO
 
-    def update_weights_biases(self, weights, biases):
-        self.WeightsO = weights
-        self.BiasesO = biases
+    def update_weights_biases(self, weightsH, biasesH, weightsO, biasesO):
+        self.WeightsO = weightsO
+        self.BiasesO = biasesO
+        self.WeightsH = weightsH
+        self.BiasesH = biasesH
 
     def make_prediction(self, sensors, vr, vl, max_speed):
         # normalization
