@@ -33,7 +33,7 @@ class NeuralNetwork:
         vr = (vr + max_speed)/(2 * max_speed)
         vl = (vl + max_speed)/(2 * max_speed)
 
-        sensors.extend([vl,vr])
+        sensors.extend([vl, vr])
 
         input_vector = np.asarray(sensors)
 
