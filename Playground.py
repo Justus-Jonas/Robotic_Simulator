@@ -104,7 +104,7 @@ class Playground(QMainWindow):
         if self.robot.vright < -self.MAX_SPEED:
             self.robot.vright = -self.MAX_SPEED
 
-        self.robot.vright, self.robot.vleft = self.nn.make_prediction(sensor_distances, self.robot.vright, self.robot.vleft, self.MAX_SPEED)
+        self.robot.vright, self.robot.vleft = self.nn.make_prediction(sensor_distances, self.MAX_SPEED)
 
         if self.collisionFlag:
             self.robot.pos = self.prevPos
