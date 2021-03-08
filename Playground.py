@@ -15,10 +15,11 @@ class Playground(QMainWindow):
     SCREEN_HEIGHT = 720
     MAX_SPEED = 5
 
-    def __init__(self):
+    def __init__(self, simulation=False):
         super(Playground, self).__init__()
         self.initGround()
-        self.initUIComponents()
+        if not simulation:
+            self.initUIComponents()
         self.nn = NeuralNetwork(8)
 
     def getCenter(self):
@@ -62,10 +63,9 @@ class Playground(QMainWindow):
                 self.collisionFlag = temp
             sensor2walls_distances.append(self.robot.sensorDistances.copy())
         sensor_walls = zip(*sensor2walls_distances)
-        #print(list(zip(*sensor2walls_distances)))
+
         sensor_distances = [min(wd) if min(wd)<=self.robot.sensorThreshold else self.robot.sensorThreshold for wd in sensor_walls]
         self.robot.sensorDistances = sensor_distances.copy()
-        print(sensor_distances)
 
         if self.collisionFlag:
             self.robot.pos = self.prevPos
@@ -84,8 +84,8 @@ class Playground(QMainWindow):
             if self.collisionFlag == False:
                 self.collisionFlag = temp
             sensor2walls_distances.append(self.robot.sensorDistances.copy())
+        
         sensor_walls = zip(*sensor2walls_distances)
-        # print(list(zip(*sensor2walls_distances)))
         sensor_distances = [min(wd) if min(wd) <= self.robot.sensorThreshold else self.robot.sensorThreshold for wd
                             in sensor_walls]
 
@@ -111,7 +111,7 @@ class Playground(QMainWindow):
 
         self.prevPos = self.robot.pos
 
-        return True
+        return self.robot.pos, self.collisionFlag
     
     '''
     Key events - 
