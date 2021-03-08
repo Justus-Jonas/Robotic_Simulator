@@ -48,7 +48,7 @@ def evaluate_episode(individual, episode_length_frames):
                                         biasesO = np.array(individual[first_layer_final_index + second_layer_final_index + playground.nn.HiddenSize : first_layer_final_index + second_layer_final_index + playground.nn.HiddenSize + playground.nn.OutputSize]).reshape(playground.nn.BiasesO.shape))
 
     # init coins
-    divisions = 30
+    divisions = 50
     x = np.linspace(0, playground.SCREEN_WIDTH, divisions)
     y = np.linspace(0, playground.SCREEN_HEIGHT, divisions)
     X, Y = np.meshgrid(x, y)
@@ -65,6 +65,8 @@ def evaluate_episode(individual, episode_length_frames):
                 if colected:
                     reward += 1
                     coin_coords.pop(i)
+
+        reward -= 2
     
     return reward
 
