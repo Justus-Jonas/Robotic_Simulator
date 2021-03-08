@@ -169,8 +169,8 @@ if __name__ == "__main__":
     plt.legend()
     plt.show()
 
-    with open('weights.pkl', 'wb') as f:
+    with open('weights2.pkl', 'wb') as f:
         pickle.dump(generations, f)
 
-    with open('costs.pkl', 'wb') as f:
+    with open('costs2.pkl', 'wb') as f:
         pickle.dump(costs, f)
