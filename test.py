@@ -18,6 +18,8 @@ class Playground(QMainWindow):
 
     def __init__(self, simulation=False):
         super(Playground, self).__init__()
+        self.hide()
+
         self.initGround()
         if not simulation:
             self.initUIComponents()
@@ -46,9 +48,23 @@ class Playground(QMainWindow):
     def initGround(self):
         self.walls = []
         self.robot = Robot()
+        self.robot.pos = [500,500]
+        # self.robot.pos = (random.randint(0, self.SCREEN_WIDTH), random.randint(0, self.SCREEN_HEIGHT))
+
         centerX, centerY = self.getCenter()
         # rectangle box
         # self.walls.append(Wall(centerX,centerY,100,100))
+
+        # self.walls.append(Wall(centerX-self.SCREEN_WIDTH/10, centerY, -1, self.SCREEN_HEIGHT/10))
+        # self.walls.append(Wall(centerX+self.SCREEN_WIDTH/10, centerY, -1, self.SCREEN_HEIGHT/10))
+        # self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/10, self.SCREEN_WIDTH/10, -1))
+        # self.walls.append(Wall(centerX, centerY+self.SCREEN_HEIGHT/10, self.SCREEN_WIDTH/10, -1))
+
+        self.walls.append(Wall(centerX-self.SCREEN_WIDTH/8, centerY, -1, self.SCREEN_HEIGHT/10))
+        self.walls.append(Wall(centerX+self.SCREEN_WIDTH/8, centerY, -1, self.SCREEN_HEIGHT/10))
+        self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/8, self.SCREEN_WIDTH/10, -1))
+        self.walls.append(Wall(centerX, centerY+self.SCREEN_HEIGHT/8, self.SCREEN_WIDTH/10, -1))
+
         self.walls.append(Wall(centerX-self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
         self.walls.append(Wall(centerX+self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
         self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, -1))
@@ -179,6 +195,9 @@ class Playground(QMainWindow):
 
         painter.end()
 
+
+
+
     # def drawLines(self, qp):      
     #     pen = QPen(Qt.black, 1.5, Qt.SolidLine)
     #     qp.setPen(pen)
@@ -223,5 +242,5 @@ if __name__ == '__main__':
 
     app = QApplication([])
     game = Playground()
-    
+
     sys.exit(app.exec_())

@@ -28,9 +28,16 @@ class Playground(QMainWindow):
     def initGround(self):
         self.walls = []
         self.robot = Robot()
+        self.robot.pos = (random.randint(0, self.SCREEN_WIDTH), random.randint(0, self.SCREEN_HEIGHT))
         centerX, centerY = self.getCenter()
         # rectangle box
         # self.walls.append(Wall(centerX,centerY,100,100))
+
+        self.walls.append(Wall(centerX-self.SCREEN_WIDTH/10, centerY, -1, self.SCREEN_HEIGHT/10))
+        self.walls.append(Wall(centerX+self.SCREEN_WIDTH/10, centerY, -1, self.SCREEN_HEIGHT/10))
+        self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/10, self.SCREEN_WIDTH/10, -1))
+        self.walls.append(Wall(centerX, centerY+self.SCREEN_HEIGHT/10, self.SCREEN_WIDTH/10, -1))
+
         self.walls.append(Wall(centerX-self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
         self.walls.append(Wall(centerX+self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
         self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, -1))

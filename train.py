@@ -9,7 +9,7 @@ from Playground import Playground, QApplication
 from NeuralNetwork import NeuralNetwork
 
 HIDDEN_SIZE = 8
-POPULATION_SIZE = 5
+POPULATION_SIZE = 10
 app = QApplication([])
 
 def create_individual():
@@ -125,7 +125,7 @@ def main():
         ranked_generation = [idv for fitness, idv in sorted(zip(generation_cost, generation), reverse=True)]
         ranked_costs = sorted(generation_cost)
         
-        # perform selection 
+        # perform selection
         probabilities = [cost/total_generation_cost for cost in ranked_costs]
         cumulative_probabilities = np.cumsum(probabilities)
         

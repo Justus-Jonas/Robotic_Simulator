@@ -177,7 +177,7 @@ class Robot(Artifact):
             ptY = self.pos[1] - self.point[1]
 
             pt = np.array([ptX, ptY])
-            pt = Utils.normalizationByDivision(pt)
+            pt = VecUtils.normalizationByDivision(pt)
             self.pos = intersectionPoint + pt*(self.rsize[0]/2 + 0.1)
         
         return True
