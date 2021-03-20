@@ -3,6 +3,9 @@ import math
 
 sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
 
+vr = 0.8
+vl = 0.8
+
 class NeuralNetwork:
     def __init__(self, hiddenSize):
         self.InputSize = 12 + 2  # 12 sensors + current vl + rl
@@ -27,20 +30,21 @@ class NeuralNetwork:
         self.WeightsH = weightsH
         self.BiasesH = biasesH
 
-    def make_prediction(self, sensors, vr, vl, max_speed):
+    def make_prediction(self, sensors, max_speed):
+        global vr, vl
         # normalization
         sensors = [sensor / 100 for sensor in sensors]
         vr = (vr + max_speed)/(2 * max_speed)
         vl = (vl + max_speed)/(2 * max_speed)
 
-        sensors.extend([vl,vr])
+        sensors.extend([vl, vr])
 
         input_vector = np.asarray(sensors)
 
         output = self.feed_forward(input_vector)
 
         # decoding
-        vl_output = round(output[0][0] * 2 * max_speed - max_speed)
-        vr_output = round(output[0][1] * 2 * max_speed - max_speed)
+        vl = round(output[0][0] * 2 * max_speed - max_speed)
+        vr = round(output[0][1] * 2 * max_speed - max_speed)
 
-        return vr_output, vl_output
+        return vr, vl
