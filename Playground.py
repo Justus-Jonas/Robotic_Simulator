@@ -30,10 +30,27 @@ class Playground(QMainWindow):
         centerX, centerY = self.getCenter()
         # rectangle box
         # self.walls.append(Wall(centerX,centerY,100,100))
-        self.walls.append(Wall(centerX-self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
-        self.walls.append(Wall(centerX+self.SCREEN_WIDTH/2, centerY, -1, self.SCREEN_HEIGHT))
-        self.walls.append(Wall(centerX, centerY-self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, -1))
-        self.walls.append(Wall(centerX, centerY+self.SCREEN_HEIGHT/2, self.SCREEN_WIDTH, -1))
+        # centery - oben
+
+
+        self.walls.append(Wall(centerX - self.SCREEN_WIDTH / 2, centerY, -1, self.SCREEN_HEIGHT + self.SCREEN_HEIGHT/2 + self.SCREEN_HEIGHT/6 ))
+        self.walls.append(Wall(centerX + self.SCREEN_WIDTH, centerY , -1, self.SCREEN_HEIGHT + self.SCREEN_HEIGHT/2 + self.SCREEN_HEIGHT/6))
+
+
+        self.walls.append(Wall(centerX, centerY - self.SCREEN_HEIGHT / 2, self.SCREEN_WIDTH +self.SCREEN_WIDTH, -1))
+        self.walls.append(Wall(centerX, centerY + self.SCREEN_HEIGHT / 3 + self.SCREEN_HEIGHT / 2, self.SCREEN_WIDTH + self.SCREEN_WIDTH, -1))
+
+        self.walls.append(Wall(centerX - self.SCREEN_WIDTH / 6, centerY, -1, self.SCREEN_HEIGHT))
+        self.walls.append(Wall(centerX + self.SCREEN_WIDTH / 6, centerY + self.SCREEN_HEIGHT / 3, -1, self.SCREEN_HEIGHT))
+
+        self.walls.append(Wall(centerX + self.SCREEN_WIDTH/3 + self.SCREEN_WIDTH/12 , centerY - self.SCREEN_HEIGHT/6,  self.SCREEN_WIDTH/2, -1))
+        self.walls.append(Wall(centerX + self.SCREEN_WIDTH/3 + self.SCREEN_WIDTH/3 + self.SCREEN_WIDTH/12 , centerY + self.SCREEN_HEIGHT/3,  self.SCREEN_WIDTH/2, -1))
+
+
+        #self.walls.append(Wall(centerX - self.SCREEN_WIDTH / 4, centerY, -1, self.SCREEN_HEIGHT- self.SCREEN_HEIGHT /2))
+        #self.walls.append(Wall(centerX + self.SCREEN_WIDTH / 2, centerY, -1, self.SCREEN_HEIGHT))
+        #self.walls.append(Wall(centerX, centerY - self.SCREEN_HEIGHT / 2, self.SCREEN_WIDTH, -1))
+
 
         self.doPress = False
         self.collisionFlag = False
@@ -65,7 +82,7 @@ class Playground(QMainWindow):
         #print(list(zip(*sensor2walls_distances)))
         sensor_distances = [min(wd) if min(wd)<=self.robot.sensorThreshold else self.robot.sensorThreshold for wd in sensor_walls]
         self.robot.sensorDistances = sensor_distances.copy()
-        print(sensor_distances)
+        #print(sensor_distances)
 
         if self.collisionFlag:
             self.robot.pos = self.prevPos
@@ -172,7 +189,7 @@ class Playground(QMainWindow):
             dt = (currentTime - self.lastFrameTime)
             self.lastFrameTime = currentTime
             #self.playgroundUpdateFlow(dt)
-            self.playground_AI_update_flow(dt)
+            self.playgroundUpdateFlow(dt)
             self.update()
         else:
             super(MRS, self).timerEvent(event)
