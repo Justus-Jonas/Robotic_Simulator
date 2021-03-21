@@ -29,3 +29,12 @@ def KalmanFilter(dt, theta, lastMean, lastCovariance, u, z):
         print("gotta change something")
 
     return predMean, predCovariance, mean, covariance
+
+def estimate_position(x):
+    # x is a vector [x, y, theta]
+    std_x = 0.5
+    std_y = 0.5
+    std_theta = 0.15 
+    z = np.dot(C, x) + np.array([std_x, std_y, std_theta]).reshape(-1, 1)
+
+    return z
