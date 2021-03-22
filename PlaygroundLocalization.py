@@ -73,6 +73,7 @@ class PlaygroundLocalization(QMainWindow):
 
         #update beacons
         self.robot.features = []
+        self.robot.beacons_pos_in_area = []
         for beacon in self.beacons:
             beacon.isDetected = self.robot.UpdateSensor(beacon)
 
@@ -109,9 +110,12 @@ class PlaygroundLocalization(QMainWindow):
             p1 = self.beacons[line[0]-1].pos
             p2 = self.beacons[line[1]-1].pos
             qpainter.drawLine(p1[0],p1[1],p2[0],p2[1])
-
         for beacon in self.beacons:
             beacon.Draw(qpainter)
+
+        for beacon in self.robot.beacons_pos_in_area:
+            qpainter.setPen(QPen(Qt.red, 1, Qt.DashLine))
+            qpainter.drawLine(QPointF(beacon[0], beacon[1]), (QPointF(self.robot.pos[0], self.robot.pos[1])))
 
         pen = QPen(Qt.black, 1.5, Qt.SolidLine)
         qpainter.setPen(pen)

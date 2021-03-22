@@ -14,6 +14,7 @@ class LRobot:
         self.drawColor = drawColor
         self.doFill = doFill
         self.Reset(startPos)
+        self.beacons_pos_in_area = []
 
     def Reset(self,startPos):
         self.pos = np.copy(startPos)
@@ -82,6 +83,8 @@ class LRobot:
         norm = np.linalg.norm(distance)
         isDetected = norm < self.sThreshold
         if isDetected:
+            self.beacons_pos_in_area.append([beacon.pos[0],beacon.pos[1]])
+            # draw line
             range = norm
             phi = np.arctan2(distance[1], distance[0]) - self.theta
             signature = beacon.id
