@@ -77,6 +77,7 @@ class PlaygroundLocalization(QMainWindow):
         for beacon in self.beacons:
             beacon.isDetected = self.robot.UpdateSensor(beacon)
 
+
         pMean,pCovariance,mean,covariance = KalmanFilter(dt,
                      self.robot.theta,
                      self.lastMean,

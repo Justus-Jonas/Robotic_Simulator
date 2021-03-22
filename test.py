@@ -12,9 +12,9 @@ import pickle
 from NeuralNetwork import NeuralNetwork
 
 class Playground(QMainWindow):
-    SCREEN_WIDTH = 1080
-    SCREEN_HEIGHT = 720
-    MAX_SPEED = 5
+    SCREEN_WIDTH = 1480
+    SCREEN_HEIGHT = 1020
+    MAX_SPEED = 100
 
     def __init__(self, simulation=False):
         super(Playground, self).__init__()
@@ -74,6 +74,7 @@ class Playground(QMainWindow):
         self.collisionFlag = False
         self.timer = QBasicTimer()
         self.prevPos = self.robot.pos
+
 
     def initUIComponents(self):
         layoutHorizontal = QHBoxLayout(self)
@@ -138,7 +139,7 @@ class Playground(QMainWindow):
         if self.robot.vright < -self.MAX_SPEED:
             self.robot.vright = -self.MAX_SPEED
 
-        self.robot.vright, self.robot.vleft = self.nn.make_prediction(sensor_distances, self.robot.vright, self.robot.vleft, self.MAX_SPEED)
+        self.robot.vright, self.robot.vleft = self.nn.make_prediction(sensor_distances, self.MAX_SPEED)
 
         if self.collisionFlag:
             self.robot.pos = self.prevPos
