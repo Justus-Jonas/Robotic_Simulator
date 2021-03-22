@@ -10,7 +10,7 @@ def KalmanFilter(dt, theta, lastMean, lastCovariance, u, z):
     sigmaMotion = np.array([250, 10, 20])
     sigmaSensor = np.array([100,50,0.1])
 
-    B = np.array([[dt*np.cos(theta), 0],[dt*np.sin(theta, 0)],[0, dt]])
+    B = np.array([[dt*np.cos(theta), 0],[dt*np.sin(theta), 0],[0, dt]])
     motion = np.identity(3)*sigmaMotion
     sensor = np.identity(3)*sigmaSensor
 
@@ -20,7 +20,7 @@ def KalmanFilter(dt, theta, lastMean, lastCovariance, u, z):
 
     #correction stuff
     mulMat = np.dot(np.dot(C, predCovariance), C.T)
-    inverseMat = np.linalg.inv(mulMat + Q)
+    inverseMat = np.linalg.inv(mulMat + sensor)
     K = np.dot(np.dot(predCovariance, C.T), inverseMat)
     mean = predMean + np.dot(K, (z-np.dot(C, predMean)))
     covariance = np.dot((np.identity(3) - np.dot(K, C)), predCovariance)
